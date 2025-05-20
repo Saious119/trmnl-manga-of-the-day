@@ -1,0 +1,50 @@
+<div class="layout">
+    <div class="flex flex--row">
+        <div class="flex flex--col">
+            <img class="image-dither h--48" src="{{ coverImage.extraLarge}}" alt="{{{ title.english}}"/>
+        </div>
+        <div class="flex flex--col">
+        <div class="title" style="font-size:32px;">
+            {% if title.romaji == title.english %}
+                {{ title.english }}
+            {% elsif title.english == null %}
+                {{ title.romaji }}
+            {% else %}
+                {{ title.english }} - {{ title.romaji }}
+            {% endif %}
+        </div>
+            <div class="flex flex--row">
+                <div class="flex flex--col">
+                    <div class="flex flex--col">
+                        <div class="flex flex--row">
+                            <span class="text--bold" style="font-size:24px;">Rating:</span>
+                            <span class="text--bold" style="font-size:24px;">{{ averageScore }}%</span>
+                        </div>
+                        <div class="flex flex--row">
+                            <span class="text--bold"  style="font-size:24px;">Run:</span>
+                            <span class="text--bold" style="font-size:24px;"> {{ startDate.year }} -  
+                            {% if endDate.year == null %}Ongoing{% else %}{{ endDate.year }}{% endif %}</span>
+                        </div>
+                    </div>
+                    <div class="genreList" style=font-size:24px;>
+                        Genres:
+                        {% for genre in  genres %}
+                            <span class="tag">{{ genre }}{% unless forloop.last %}, {% endunless %}</span>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        {% if chapters != null %}
+                            <span class="text--bold" style="font-size:24px;">Number of Chapters:</span>
+                            <span class="text--bold" style="font-size:24px;"> {{ chapters }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="title_bar">
+    <span class="title">Anilist</span>
+    <span class="instance">Manga of the Day</span>
+</div>

@@ -1,0 +1,10 @@
+---
+strategy: polling
+no_screen_padding: "no"
+dark_mode: "no"
+static_data: ""
+polling_verb: get
+polling_url: ""
+polling_headers: ""
+name: Manga of the Day
+refresh_interval: 15

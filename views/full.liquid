@@ -1,0 +1,69 @@
+<div class="layout">
+    <div class="flex flex--col">
+        <div class="title" style="font-size:32px;">
+            {% if title.romaji == title.english %}
+                {{ title.english }}
+            {% elsif title.english == null %}
+                {{ title.romaji }}
+            {% else %}
+                {{ title.english }} - {{ title.romaji }}
+            {% endif %}
+        </div>
+        <div class="flex flex--row">
+            <div class="flex flex--col">
+                <img class="image-dither h--80" src="{{ coverImage.extraLarge}}" alt="{{ title.english }}"/>
+            </div>
+            <div class="flex flex--col">
+                <div class="flex flex--col">
+                    <div class="flex flex--row">
+                        <span class="text--bold" style="font-size:32px;">Rating:</span>
+                        <span class="text--bold" style="font-size:32px;">{{ averageScore }}%</span>
+                    </div>
+                    <div class="flex flex--row">
+                        <span class="text--bold"  style="font-size:24px;">Run:</span>
+                        <span class="text--bold" style="font-size:24px;"> {{ startDate.year }} -  
+                        {% if endDate.year == null %}Ongoing{% else %}{{ endDate.year }}{% endif %}</span>
+                    </div>
+                </div>
+                <div class="genreList">
+                    Genres:
+                    {% for genre in  genres %}
+                        <span class="tag">{{ genre }}{% unless forloop.last %}, {% endunless %}</span>
+                    {% endfor %}
+                </div>
+                <div class="description">
+                    <p class="text--center clamp--8" style="word-break: keep-all;">{{ description}}</p>
+                </div>
+                <div class="authors">
+                    {% assign art_authors = staff.edges | where: "role", "Art" %}
+                    {% assign story_authors = staff.edges | where: "role", "Story" %}
+                    {% assign art_story_authors = staff.edges | where: "role", "Story & Art" %}
+                    {% assign filtered_authors = art_authors | concat: story_authors | concat: art_story_authors %}
+                    {% for author in filtered_authors %}
+                        <span class="text--bold" style="font-size:24px;">{{ author.role }} by: {{ author.node.name.full }}{% unless forloop.last %}, {% endunless %}</span>
+                        <br>
+                    {% endfor %}
+                </div>
+                <div class="flex flex--row">
+                    <div class="flex flex--col" style="margin: 0 20px 0 0;">
+                        {% if chapters != null %}
+                            <span class="text--bold" style="font-size:24px;">Number of Chapters:</span>
+                            <span class="text--bold" style="font-size:24px;"> {{ chapters }}</span>
+                        {% endif %}
+                    </div> 
+                    <div class="flex flex--col">
+                        {% if volumes != null %}
+                            <span class="text--bold" style="font-size:24px;">Number of Volumes:</span>
+                            <span class="text--bold" style="font-size:24px;"> {{ volumes }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="title_bar">
+    <span class="title">Anilist</span>
+    <span class="instance">Manga of the Day</span>
+</div>
