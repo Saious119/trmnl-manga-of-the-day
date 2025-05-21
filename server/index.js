@@ -123,6 +123,7 @@ async function GetAllMangaPages(query, variables) {
   if (result.data.Page.pageInfo.hasNextPage) {
     console.log("Fetching additional pages...");
     while (result.data.Page.pageInfo.hasNextPage && apiTries < 15) {
+      apiTries++; // Increment the API tries counter
       variables.page += 1; // Increment the page number
       const nextPageResult = await fetchMangaData(query, variables); // Fetch the next page
       result.data.Page.media.push(...nextPageResult.data.Page.media); // Append the new media to the existing array
