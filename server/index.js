@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const testJson = require("./testData");
 
 var query = `query Page($page: Int, $type: MediaType, $isAdult: Boolean, $startDateGreater: FuzzyDateInt, $startDateLesser: FuzzyDateInt, $averageScoreGreater: Int) {
   Page(page: $page) {
@@ -122,7 +123,8 @@ async function GetAllMangaPages(query, variables) {
   }
   if (result.data.Page.pageInfo.hasNextPage) {
     console.log("Fetching additional pages...");
-    while (result.data.Page.pageInfo.hasNextPage) {
+    const numPagesFetched = 1; // We have already fetched the first page
+    while (result.data.Page.pageInfo.hasNextPage && numPagesFetched <= 5) {
       variables.page += 1; // Increment the page number
       const nextPageResult = await fetchMangaData(query, variables); // Fetch the next page
       result.data.Page.media.push(...nextPageResult.data.Page.media); // Append the new media to the existing array
@@ -149,17 +151,25 @@ app.get("/data", async (req, res) => {
     variables.page = 1; // Reset page to 1 for each new request
 
     try {
-      while (currentRating < minRating && apiTries < 15) {
+      while (
+        (currentRating < minRating || genreList == "Ecchi") &&
+        apiTries < 15
+      ) {
         const result = await GetAllMangaPages(query, variables); // Fetch all pages of Manga data
         mangaOfTheDay = await SelectRandomManga(result.data.Page.media); // Select a random Manga from the result
         currentRating = mangaOfTheDay.averageScore;
         englishName = mangaOfTheDay.title.english; // Get the English name of the selected Manga
+        genreList = mangaOfTheDay.genres; // Get the genres of the selected Manga
+        console.log(
+          `Selected Manga: ${englishName}, Rating: ${currentRating}, Genres: ${genreList}`
+        );
         apiTries++; // Increment the API tries counter
       }
       console.log("Selected Manga:", mangaOfTheDay); // Log the selected Manga
       res.json(mangaOfTheDay); // Send the result back to the client
     } catch (error) {
-      res.status(500).json({ error: "An error occurred" });
+      console.log("Error occurred, returning test JSON:", error);
+      res.json(testJson); // In case of error, return the test JSON so the user still gets something
     }
   } else {
     console.log("Returning cached Manga of the day");
@@ -169,115 +179,7 @@ app.get("/data", async (req, res) => {
 
 app.get("/test", async (req, res) => {
   console.log("Test endpoint hit");
-  const testJson = {
-    averageScore: 81,
-    chapters: 176,
-    coverImage: {
-      extraLarge:
-        "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx39711-tjPWXT1AW321.jpg",
-    },
-    description:
-      "Average student Moritaka Mashiro enjoys drawing for fun. When his classmate and aspiring writer Akito Takagi discovers his talent, he begs Moritaka to team up with him as a manga-creating duo. But what exactly does it take to make it in the manga-publishing world?\n<br><br>\n(Source: Viz Media)",
-    endDate: {
-      year: 2012,
-    },
-    genres: ["Comedy", "Drama", "Romance", "Slice of Life"],
-    startDate: {
-      year: 2008,
-    },
-    staff: {
-      edges: [
-        {
-          node: {
-            name: {
-              full: "Takeshi Obata",
-            },
-          },
-          role: "Art",
-        },
-        {
-          node: {
-            name: {
-              full: "Tsugumi Ooba",
-            },
-          },
-          role: "Story",
-        },
-        {
-          node: {
-            name: {
-              full: "Thibaud Desbief",
-            },
-          },
-          role: "Translator (French)",
-        },
-        {
-          node: {
-            name: {
-              full: "Edward Kondo",
-            },
-          },
-          role: "Translator (Portuguese)",
-        },
-        {
-          node: {
-            name: {
-              full: "Karolina Dwornik",
-            },
-          },
-          role: "Translator (Polish: vols 1-4)",
-        },
-        {
-          node: {
-            name: {
-              full: "Marc Bernabé",
-            },
-          },
-          role: "Translator (Spanish)",
-        },
-        {
-          node: {
-            name: {
-              full: "Agnieszka Zychma",
-            },
-          },
-          role: "Translator (Polish: vols 13-20)",
-        },
-        {
-          node: {
-            name: {
-              full: "Aleksandra Kulińska",
-            },
-          },
-          role: "Translator (Polish: vols 5-12)",
-        },
-        {
-          node: {
-            name: {
-              full: "Souichi Aida",
-            },
-          },
-          role: "Editor (2008-2010)",
-        },
-        {
-          node: {
-            name: {
-              full: "Kengo Monji",
-            },
-          },
-          role: "Editor (2010-2012)",
-        },
-      ],
-    },
-    status: "FINISHED",
-    title: {
-      english: "Bakuman。",
-      romaji: "Bakuman.",
-    },
-    volumes: 20,
-  };
-
-  res.json(testJson); // Send the JSON object as the response
+  res.json(testJson);
 });
 
 app.listen(3000, () => {
