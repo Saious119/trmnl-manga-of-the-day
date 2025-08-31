@@ -109,7 +109,7 @@ async function GetAllMangaPages(query, variables) {
   variables.startDateGreater = parseInt(randomYear + "0101");
   variables.startDateLesser = parseInt(randomYear + 1 + "0101");
   var result = await fetchMangaData(query, variables); // Use the new function
-  while (result.data.Page.media.length == 0 && apiTries < 15) {
+  while (result.data.Page.media.length == 0 && apiTries < 10) {
     apiTries++; // Increment the API tries counter
     console.log("No media found, trying again...");
     variables.page = 1; // Reset page to 1 for each new request
@@ -123,8 +123,8 @@ async function GetAllMangaPages(query, variables) {
   }
   if (result.data.Page.pageInfo.hasNextPage) {
     console.log("Fetching additional pages...");
-    const numPagesFetched = 1; // We have already fetched the first page
-    while (result.data.Page.pageInfo.hasNextPage && numPagesFetched <= 5) {
+    while (result.data.Page.pageInfo.hasNextPage && apiTries < 15) {
+      apiTries++; // Increment the API tries counter
       variables.page += 1; // Increment the page number
       const nextPageResult = await fetchMangaData(query, variables); // Fetch the next page
       result.data.Page.media.push(...nextPageResult.data.Page.media); // Append the new media to the existing array
@@ -143,6 +143,7 @@ app.get("/data", async (req, res) => {
     console.log("Last updated: ", lastUpdated);
     console.log("Current date: ", new Date());
     console.log(JSON.stringify(mangaOfTheDay));
+    lastUpdated = new Date().toISOString(); // Update lastUpdated to the current date and time
     const minRating = Math.floor(Math.pow(Math.random(), 0.44) * 80); // Random popularity value
     currentRating = 0;
     console.log("Minimum Rating: ", minRating);
