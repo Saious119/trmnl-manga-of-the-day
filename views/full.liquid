@@ -1,6 +1,6 @@
 <div class="layout">
-    <div class="flex flex--col">
-        <div class="title" style="font-size:32px;">
+    <div class="flex flex--col" style="height:100%;">
+        <div class="title" style="font-size:32px; flex:0 0 auto;">
             {% if title.romaji == title.english %}
                 {{ title.english }}
             {% elsif title.english == null %}
@@ -9,11 +9,11 @@
                 {{ title.english }} - {{ title.romaji }}
             {% endif %}
         </div>
-        <div class="flex flex--row">
-            <div class="flex flex--col">
-                <img class="image-dither h--80" src="{{ coverImage.extraLarge}}" alt="{{ title.english }}"/>
+        <div class="flex flex--row" style="flex:1; min-height:0;">
+            <div class="flex flex--col" style="flex:0 0 auto; max-width:50%; height:100%;">
+                <img class="image-dither" src="{{ coverImage.extraLarge}}" alt="{{ title.english }}" style="height:100%; width:auto; object-fit:contain; display:block;"/>
             </div>
-            <div class="flex flex--col">
+            <div class="flex flex--col" style="flex:1 1 0; min-width:0; overflow:hidden;">
                 <div class="flex flex--col">
                     <div class="flex flex--row">
                         <span class="text--bold" style="font-size:32px;">Rating:</span>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="flex flex--row">
                         <span class="text--bold"  style="font-size:24px;">Run:</span>
-                        <span class="text--bold" style="font-size:24px;"> {{ startDate.year }} -  
+                        <span class="text--bold" style="font-size:24px;"> {{ startDate.year }} -
                         {% if endDate.year == null %}Ongoing{% else %}{{ endDate.year }}{% endif %}</span>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                             <span class="text--bold" style="font-size:24px;">Number of Chapters:</span>
                             <span class="text--bold" style="font-size:24px;"> {{ chapters }}</span>
                         {% endif %}
-                    </div> 
+                    </div>
                     <div class="flex flex--col">
                         {% if volumes != null %}
                             <span class="text--bold" style="font-size:24px;">Number of Volumes:</span>
