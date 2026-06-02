@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trmnl-manga-of-the-day
+  namespace: trmnl
+  labels:
+    app: trmnl-manga-of-the-day
+spec:
+  # Keep at 1 replica — the daily manga cache is in-memory, multiple replicas
+  # would cause each pod to independently re-fetch and potentially show different manga.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trmnl-manga-of-the-day
+  template:
+    metadata:
+      labels:
+        app: trmnl-manga-of-the-day
+    spec:
+      # Pin to the node that runs the local registry — the image is referenced as
+      # localhost:5000, which only resolves on the node hosting the registry container.
+      nodeSelector:
+        kubernetes.io/hostname: sixtrash
+      containers:
+        - name: trmnl-manga-of-the-day
+          image: localhost:5000/trmnl-manga-of-the-day:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /test
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /test
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      restartPolicy: Always

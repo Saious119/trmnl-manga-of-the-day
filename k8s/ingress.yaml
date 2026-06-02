@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trmnl-manga-of-the-day
+  namespace: trmnl
+  # Uncomment if you use cert-manager for TLS:
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: trmnl-manga-of-the-day.sixtrash.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: trmnl-manga-of-the-day
+                port:
+                  number: 80
+  # Uncomment if you use cert-manager for TLS:
+  # tls:
+  #   - hosts:
+  #       - manga.yourdomain.com
+  #     secretName: trmnl-manga-of-the-day-tls
